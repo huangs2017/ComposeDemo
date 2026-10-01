@@ -1,36 +1,22 @@
 package com.test.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-)
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
 
 @Composable
-fun ComposeDemoTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+fun WarnTheme(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalWarn provides Color2) {
+        MaterialTheme(
+            content = content
+        )
     }
+}
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+@Composable
+fun MyTheme(color: Color, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalColors provides color) {
+        content()
+    }
 }
