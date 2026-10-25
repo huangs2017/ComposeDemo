@@ -1,4 +1,4 @@
-package com.test
+package com.test.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,7 +15,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 
-// Modifier.layout 示例
+// Modifier.layout 单个组件测量和摆放
+// Layout 完整的布局容器, 可以同时测量、摆放多个子元素（Row、Column、Box 底层全是用它实现的）
+
+// 1.Modifier.layout 示例
 @Preview(showBackground = true)
 @Composable
 fun Demo1() {
@@ -33,7 +36,7 @@ fun Demo1() {
 
 
 
-// Layout 示例
+// 2.Layout 示例
 @Preview(showBackground = true)
 @Composable
 fun Demo2() {
@@ -43,30 +46,36 @@ fun Demo2() {
         layout(bitmap.width, bitmap.height) {}
     }
 
-    CustomLayout {
+    // 有子组件的Layout函数
+    MyLayout {
         Box(Modifier.size(20.dp).background(Color.Red))
         Box(Modifier.size(20.dp).background(Color.Red))
     }
 }
 
 @Composable
-fun CustomLayout(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    // 实用的场景：有子组件的Layout函数（content是子组件）
+fun MyLayout(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    // 实用的场景：有子组件的Layout函数（content 子组件集合）
     Layout(content, modifier) { measurables, constraints -> // measurables
         var remainedConstraints = constraints
         var totalWidth = 0
         var totalHeight = 0
-        val placeables = mutableListOf<Placeable>()
+        val placeableList = mutableListOf<Placeable>()
+
         measurables.forEach {
-            val placeable = it.measure(remainedConstraints).apply { placeables.add(this) }
+            // 1.测量所有的子组件
+            val placeable = it.measure(remainedConstraints).apply { placeableList.add(this) }
             remainedConstraints = remainedConstraints.offset(horizontal = -placeable.width, vertical = -placeable.height)
-                    totalWidth += placeable.width
-                    totalHeight += placeable.height
+            // 2.计算容器自己的总宽高
+            totalWidth += placeable.width
+            totalHeight += placeable.height
         }
-        layout(totalWidth, totalHeight) { //
+
+        // 3.决定容器大小，并依次放置每一个子组件
+        layout(totalWidth, totalHeight) {
             var offsetX = 0
             var offsetY = 0
-            placeables.forEach {
+            placeableList.forEach {
                 it.placeRelative(x = offsetX, y = offsetY)
                 offsetX += it.width
                 offsetY += it.height
