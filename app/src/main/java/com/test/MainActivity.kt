@@ -3,41 +3,42 @@ package com.test
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import com.test.ui.theme.LocalWarn
-import com.test.ui.theme.MyColor
-import com.test.ui.theme.MyTheme
-import com.test.ui.theme.WarnTheme
+import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
-            Demo()
+            TripleAssistChips()
         }
     }
 }
 
+
+// 用三个AssistChip显示Triple里的值
 @Preview(showBackground = true)
 @Composable
-fun Demo() {
-    Column {
-        WarnTheme {
-            Text(
-                text = "Hello",
-                style = TextStyle(background = LocalWarn.current)
-            )
-        }
-
-        MyTheme(MyColor) {
-            Text(
-                text = "Hello",
-                style = TextStyle(background = MyTheme.myColors)
-            )
-        }
+fun TripleAssistChips(triple: Triple<String, String, String> = Triple("标题1", "标题2", "标题3")) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        AssistChip(
+            onClick = { },
+            label = { Text(triple.first) }
+        )
+        AssistChip(
+            onClick = { },
+            label = { Text(triple.second) }
+        )
+        AssistChip(
+            onClick = { },
+            label = { Text(triple.third) }
+        )
     }
 }
